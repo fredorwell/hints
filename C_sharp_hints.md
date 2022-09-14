@@ -59,8 +59,8 @@ for (int index = 0; index < 10; index++)
     Console.WriteLine($"Hello World! The index is {index}");
 }
 ```
-Типы данных
-int - integer
-double - иррациональные
-srting - строки
-bool - логический
+### Типы данных
+- int - integer
+- double - иррациональные
+- srting - строки
+- bool - логический
