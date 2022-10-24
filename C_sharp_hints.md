@@ -10,18 +10,23 @@
 - Console.WriteLine("`текст`"); - Сообщение для вывода `текста` в консоли с переносом строки
 - Console.ReadLine(); - Запись в переменную значения;
 - new Random().Next(`min`,`max`); - Рандомайзер чисел от `min` до `max`
+- `переменная` = Convert.ToInt32(Console.ReadLine()); - Конвертирует стринг в инт
 
 ## Основные конструкции
 ### Массивы
 Объявление массива
 Синтаксис
 ```
-тип_переменной[] название_массива;
+тип_переменной[] название_массива; - одномерные массивы
+тип_переменной[,] название_массива; - двумерные массивы
 ```
 Пример:
 ```
 // Объявление массива с значениями {0, 0, 0, 0}
 int[] nums = new int[4];
+
+// Объявление массива с значениями {1, 2, 3, 4}
+int[] nums = {1, 2, 3, 4};
 
 // объявление массива с значениями {15, 1211, 433, 54}
 int[] array = {15, 1211, 433, 54};
@@ -208,6 +213,23 @@ void PrineArray(int[] collection)
     }
 }
 ```
+Пример void метода (ф-ции) по выводу двумерного массива в консоль:
+```
+void PrintMatrix(int[,] matrix)
+{
+    for (int i = 0; i < matrix.GetLength(0); i++)
+    {
+        Console.Write("|");
+        for (int j = 0; j < matrix.GetLength(1); j++)
+        {
+            if (j < matrix.GetLength(1) - 1) Console.Write($"{matrix[i, j], 4} | ");
+            else Console.Write($"{matrix[i, j], 4} ");
+        }
+        Console.WriteLine("|");
+    }
+}
+```
+
 ### `Метод с возвратом значения`
 Синтаксис:
 ```
@@ -227,9 +249,40 @@ int fMax(int arg1, int arg2, int arg3)
     return result;
 }
 ```
+Пример метода создающего и возвращающего массив:
+```
+int[] CreateArrayRndInt(int size, int min, int max)
+{
+    int[] array = new int[size];
+    var rnd = new Random();
+    for (int i = 0; i < array.Length; i++)
+    {
+        array[i] = rnd.Next(min, max + 1);
+    }
+    return array;
+}
+```
+Пример метода создающего и возвращающего двумерный массив:
+```
+int[,] CreateMatrixRndInt(int rows, int columns, int min, int max)
+{
+    int[,] matrix = new int[rows, columns];
+    var rnd = new Random();
 
-## Типы данных
-- int - integer
-- double - иррациональные
-- srting - строки
-- bool - логический
+    for (int i = 0; i < matrix.GetLength(0); i++) // 0 - rows  0 
+    {
+        for (int j = 0; j < matrix.GetLength(1); j++) // 1 - columns
+        {
+            matrix[i, j] = rnd.Next(min, max + 1);
+        }
+    }
+    return matrix;
+}
+```
+### Рекурсии
+Примеры выполнения рекурсии можно найти в репозитории
+https://github.com/fredorwell/eductation/tree/main/C%23/Lesson_9
+
+
+Все выполненные работы по C# ты найдешь в репозитории
+https://github.com/fredorwell/eductation/tree/main/C%23
