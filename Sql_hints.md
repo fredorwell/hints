@@ -111,8 +111,23 @@ select * from table_name where (column3 regexp '[0-9]') and NOT (column3 like 'a
 Можно так же фильтровать по списку или набору данных с помощью ключевого слова `IN`
 <pre>
 select * from table_name where column3 [NOT] in (value_condition1, value_condition2);
+-- в данном случае мы фильтруем значения по наличию их среди значений в таблице
+
+select * from table_name1 where column1 [NOT] in (select column1 from table_name2);
+-- В данном случае мы отбираем строки в table_name1 у которых в column1 значение находится внутри результирующей таблицы (select column1 from table_name2)
+
 </pre>
 > Прим: Так же в выражение можно встроить подзапрос и фильтровать по результатам подзапроса.
+
+#### Конструкция exists
+exists нам вернет true или false и его мы можем использовать в качестве проверки на какое-то условие
+
+<pre>
+select *
+from table_name1
+where [not] exists (select * from table_name2 where table_name1.column1 = table_name2.column2);
+</pre>
+
 
 
 #### Конструкция CASE
@@ -213,10 +228,12 @@ select column3, column4 from table2_name;
 
 ### JOIN
 Join объеденяет таблицы по ключу, основные виды:
-- inner join - Пересечение таблиц - дефолтный вариант
+- `[inner]` join - Пересечение таблиц - дефолтный вариант
+- left `[outer]` join - Присоединение к левой таблице
+- right `[outer]` join - Присоединение к правой таблице
 - full join - обе таблицы + их пересесечение
-- left join 
-- right join
+- cross join - декартово произведение таблиц
+
 
 <img src="https://www.thoughtco.com/thmb/xh4MUu8HQyX1JVEcxn2IorWogoo=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/0iHiL-d7a0c49a861448cb94477386a6f3f05b.png" title="виды join" width="500" />
 
@@ -231,6 +248,51 @@ from table_name1 [as table1]- Правая таблица
 ON table_name1.column_name = table_name2.column_name;  - по какому ключу объединяем
 </pre>
 > Прим: В примере указано обращение к колонкам с указанием названия таблицы имхо очень полезная штука.
+
+#### Пример использования outer join left|right:
+
+<pre>
+select 
+table_name1.column_name, - Поле из левой таблицы
+table_name2.column_name - Поле из правой таблицы
+from table_name1
+[right|left] [outer] join table_name2 
+ON table_name1.column_name = table_name2.column_name; 
+</pre>
+> Прим: писать outer join не обязательно, синтаксис у левого и правого похож.
+
+#### Пример использования full join:
+В mysql нет фулл джоина и я в целом понимаю почему, но если прям очень нужно его сделать, то надо костылить с помощью левого + правого джойнов, пример ниже:
+
+<pre>
+select 
+table_name1.column_name, - Поле из левой таблицы
+table_name2.column_name - Поле из правой таблицы
+from table_name1
+left outer join table_name2 
+ON table_name1.column_name = table_name2.column_name
+-- левый джоин
+union
+
+select 
+table_name1.column_name, - Поле из левой таблицы
+table_name2.column_name - Поле из правой таблицы
+from orders
+right outer join products 
+ON table_name1.column_name = table_name2.column_name; 
+-- правый джоин
+</pre>
+
+#### Пример использования cross join:
+Как же низко ты пал раз тебе понадобился этот вид джоина, но ладно. Этот джоин по факту объединяет каждую строку левой таблицы со всеми строками в правой таблицы, что выглядит как декартово произведение. 
+
+<pre>
+select *
+from table_name1
+cross join table_name2; 
+</pre>
+
+
 
 
 ## Оконные функции
