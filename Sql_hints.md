@@ -211,6 +211,27 @@ select column3, column4 from table2_name;
 
 >Так же есть дополнительный вариант UNION - это UNION ALL. Он не удаляет повторяющиеся строки.
 
+### JOIN
+Join объеденяет таблицы по ключу, основные виды:
+- inner join - Пересечение таблиц - дефолтный вариант
+- full join - обе таблицы + их пересесечение
+- left join 
+- right join
+
+<img src="https://www.thoughtco.com/thmb/xh4MUu8HQyX1JVEcxn2IorWogoo=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/0iHiL-d7a0c49a861448cb94477386a6f3f05b.png" title="виды join" width="500" />
+
+#### Пример использования inner join или просто join:
+<pre>
+select 
+table_name1.column_name, - Поле из первой таблицы
+table_name2.column_name, - Поле из второй таблицы
+(table_name2.column_name * table_name2.column_name) as operation - Пример операций между таблицами
+from table_name1 [as table1]- Правая таблица
+[inner] join table_name2 [as table2] - Левая таблица
+ON table_name1.column_name = table_name2.column_name;  - по какому ключу объединяем
+</pre>
+> Прим: В примере указано обращение к колонкам с указанием названия таблицы имхо очень полезная штука.
+
 
 ## Оконные функции
 
