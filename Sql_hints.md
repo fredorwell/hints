@@ -292,13 +292,116 @@ from table_name1
 cross join table_name2; 
 </pre>
 
-
-
-
 ## Оконные функции
+Оконная ф-ция - это функция, которая по факту берет твою таблицу, разбивает ее на части (партиции). Что в свою очередь помогает по железу более экономно выполнять любые вычисления в рамках этих партиций.
+<pre>
+-- синтаксис оконной ф-ции
+select 
+	colymn_group - Столбец для группировки
+	column_calc - Столбцы для вычисления 
+	over 
+	(
+		partition by colymn_group - Группировка для одной партиции
+		order by - сортировка для партиции
+		ROWS|RANGE - ограничение строк в пределах группы
+	)
+from tabble_name;
+</pre>
+
+Все ф-ции которые есть в оконных делятся на три типа
+- Агрегатные
+- Ранжирующие
+- функции смещения
+
+### Примеры агрегатных ф-ций
+<pre>
+-- Пример с несколькими агригатными ф-циями в рамках партиций
+select 
+	date,
+	sum(sale) over(partition by date) as sum_sales, - Сумма по партиции
+	count(sale) over(partition by date) as count_sales, - кол-во по партиции
+	avg(sale) over(partition by date) as avg_sales, - среднее по партиции
+	max(sale) over(partition by date) as max_sales - максимум по партиции
+	min(sale) over(partition by date) as min_sales - минимум по партиции
+from sales;
+</pre>
+
+### Примеры агрегатных ф-ций
+<pre>
+-- Пример с несколькими агригатными ф-циями в рамках партиций
+select 
+	date,
+	row_number() over(partition by sale) as 'Row_number', 
+	- номер строки в партиции
+	rank() over(partition by sale) as 'rank',
+	- ранг значения в рамках партиции и пропуск следующего ранга 
+	dense_rank() over(partition by sale) as 'dense_rank',
+	- ранг значения в рамках партиции без пропуска следующего ранга 
+	ntile(3) over(partition by sale) as 'ntitle'
+	- кол-во на сколько частей будет делится партиция
+from sales;
+
+</pre>
+
+### Пример ф-ции смещения
+<pre>
+-- Пример с несколькими агригатными ф-циями в рамках партиций
+select 
+	fiscal_year,
+	row_number() over(partition by fiscal_year) as 'Row_number',
+	-- просто для понимания создал чтоб понять что тут происхоидт
+	lag(sale) over(partition by fiscal_year) as 'lag',
+	-- Происходит возврат значения из следующей строки
+	lead(sale) over(partition by fiscal_year) as 'lead',
+	-- Происходит возврат значения из предыдущей строки
+	first_value(sale) over(partition by fiscal_year) as 'first_value',
+	-- Возвращает первое значение в партиции
+	last_value(sale) over(partition by fiscal_year) as 'last_value'
+	-- Возвращает последнее значение в партиции
+from sales;
+
+</pre>
+
+## Представления
+Представления в sql - это создание таблицы на основании запроса к уже существующей таблице, т.е. по факту это создание таблицы из select.
+
+Синтаксис:
+
+<pre>
+create [or replace]
+view view_name as
+	select 
+		columns
+	from table_name
+	[where condition];
+</pre>
+> [or replace] применяется в случае если представление с таким видом уже существует и его нужно перезаписать
+
+удалить представление можно с помощью `drop view view_name;`
 
 ## Временные таблицы
+Временные таблицы - это таблички созданные на устройстве для облегчения работы с бд на сервере. После окончания сеанса таблица уходит в никуда.
 
+<pre>
+-- Создание временной таблицы с заранее известной структурой
+CREATE TEMPORARY TABLE `tmp_table_name` (
+  `column1` INT NOT NULL,
+  `column2` VARCHAR(45) NOT NULL,
+  `column3` VARCHAR(45) NOT NULL,
+  `column4` INT NULL);
+
+-- Создание временной таблицы из запроса
+CREATE TEMPORARY TABLE `tmp_table_name`
+(
+	select columns
+	from table_name
+	[where condition]
+);
+</pre>
+
+> По факту временную таблицу можно создавать абсолютно аналогично созданию представления или же созданию обычной таблицы.
+
+> Огромный плюс временной таблицы - это то что работая с ней ты не используешь ресурсы сервера, ты используешь только ресурсы своего устройства.
 
 # Полезные ссылки
 - https://habr.com/ru/articles/564390/
